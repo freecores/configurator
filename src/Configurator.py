@@ -32,7 +32,7 @@ class ConfigFile:
         
         re0 = re.compile("//\s(\w.+)")
         re1 = re.compile("\/\/=(valid)\s(.+)")
-        re2 = re.compile("(\/\/)?`define\s+(\w+)((\s+([\w']+))|(\s+\/\/\s*(.*)))?\s+")
+        re2 = re.compile("(\/\/)?`define\s+(\w+)((\s+([\w'\.]+))|(\s+\/\/\s*(.*)))?\s+")
         
         current_title = ""
         current_valid = ""
@@ -59,7 +59,7 @@ class ConfigFile:
                 current_select = None
                 continue
             
-            if re.match("\s*`ifdef.*", row):
+            if re.match("\s*`ifn?def.*", row):
                 current_ifdef += 1
             
             if re.match("\s*`endif.*", row):
