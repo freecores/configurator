@@ -32,7 +32,7 @@ class ConfigFile:
         
         re0 = re.compile("//\s(\w.+)")
         re1 = re.compile("\/\/=(valid)\s(.+)")
-        re2 = re.compile("(\/\/)?`define\s+(\w+)((\s+([\w'\.]+))|(\s+\/\/\s*(.*)))?\s+")
+        re2 = re.compile("(\/\/)?`define\s+(\w+)((\s+([\w'\.\"]+))|(\s+\/\/\s*(.*)))?\s+")
         
         current_title = ""
         current_valid = ""
