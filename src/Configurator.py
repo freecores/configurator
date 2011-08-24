@@ -59,6 +59,12 @@ class ConfigFile:
                 current_select = None
                 continue
             
+            m = re.match("\/\/=comment(\s+)(.*)(\s*)", row)
+            
+            if m:
+                self.tabs[current_tab].append(ConfigLabel(m.group(2)))
+                continue
+            
             if re.match("\s*`ifn?def.*", row):
                 current_ifdef += 1
             
@@ -121,6 +127,16 @@ class ConfigFile:
         
         self.file.close()
         
+    
+
+class ConfigLabel(gtk.Label):
+    
+    def __init__(self, text):
+        
+        gtk.Label.__init__(self, "\n" + text)
+        
+    
+    def save(self, *args): pass
     
 
 class ConfigOption(gtk.HBox):

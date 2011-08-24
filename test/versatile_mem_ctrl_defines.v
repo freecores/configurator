@@ -1,5 +1,7 @@
 //=tab Main
 
+//=comment Select number of WB Groups
+
 // Number of WB groups
 //=select
 //`define WB_GRPS_1 // 1
@@ -69,6 +71,8 @@
     `define NR_OF_PORTS 8
 `endif
 
+//=comment Clock domain settings
+
 // Clock domain crossing WB1
 //=select
 //`define WB1_MEM_CLK // mem clk domain
@@ -109,6 +113,8 @@
 //`define WB8_MEM_CLK // mem clk domain
 `define WB8_CLK // wb8 clk domain
 //=end
+
+//=comment Misc. settings
 
 // Module base name
 `define BASE versatile_mem_ctrl_
