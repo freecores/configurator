@@ -9,6 +9,8 @@ import re
 import sys
 import os.path
 
+INSTANCES = []
+
 class ConfigFile:
     
     def __init__(self, filename):
@@ -222,27 +224,34 @@ class ConfigWindow(gtk.Window):
     
     def __init__(self, cfgfilename = None):
         
+        INSTANCES.append(self)
+        
         gtk.Window.__init__(self)
         
         self.set_title("Configurator")
         self.set_default_size(400, 600)
         
         self.box = gtk.VBox()
-        self.button = gtk.Button("Save")
         self.notebook = gtk.Notebook()
+        self.toolbar = ConfigToolbar(self)
         
         self.add(self.box)
         
+        self.box.pack_start(self.toolbar, False)
         self.box.pack_start(self.notebook, True)
-        self.box.pack_start(self.button, False)
-        
-        self.button.connect('clicked', lambda b: self.save())
         
         if cfgfilename is not None:
-            self.load(ConfigFile(cfgfilename))
+            self.load(cfgfilename)
+        else:
+            self.configfile = None
+        
+        self.connect("delete_event", self.close)
+        self.show_all()
         
     
-    def load(self, cfg):
+    def load(self, cfgfilename):
+        
+        cfg = ConfigFile(cfgfilename)
         
         self.set_title(cfg.title + " - Configurator")
         
@@ -266,20 +275,67 @@ class ConfigWindow(gtk.Window):
         self.configfile.save()
         
     
-    def run(self):
+    def close(self, *args):
         
-        def ondel(win, *args):
+        # Maybe check if file modified and ask to save it?
+        
+        INSTANCES.remove(self)
+        self.destroy();
+        
+        if len(INSTANCES) == 0:
             gtk.main_quit()
-            win.hide()
-            return True
-        
-        handler_id = self.connect("delete_event", ondel)
-        
-        gtk.main()
-        
-        self.disconnect(handler_id)
         
     
 
+class ConfigToolbar(gtk.Toolbar):
+    
+    def __init__(self, cfg):
+        
+        self.cfg = cfg
+        
+        gtk.Toolbar.__init__(self)
+        
+        self.insert_stock(gtk.STOCK_OPEN, "Open a file", None, self.open, None, -1)
+        self.insert_stock(gtk.STOCK_SAVE, "Save the current file", None, self.save, None, -1)
+        self.insert_stock(gtk.STOCK_CLOSE, "Close the current file", None, self.close, None, -1)
+        
+    
+    def open(self, *args):
+        
+        chooser = gtk.FileChooserDialog(
+            "Open file...", None,
+            gtk.FILE_CHOOSER_ACTION_OPEN, (
+            gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+            gtk.STOCK_OPEN, gtk.RESPONSE_OK
+        ))
+        
+        if chooser.run() != gtk.RESPONSE_OK:
+            return
+        
+        filename = chooser.get_filename()
+        
+        chooser.destroy()
+        
+        if self.cfg.configfile is None:
+            self.cfg.load(filename)
+        else:
+            ConfigWindow(filename)
+        
+    
+    def save(self, *args):
+        self.cfg.save()
+    
+    def close(self, *args):
+        self.cfg.close()
+    
+
 if __name__ == '__main__':
-    ConfigWindow(sys.argv[1]).run()
+    
+    if len(sys.argv) == 1:
+        ConfigWindow()
+    
+    for f in sys.argv[1:]:
+        ConfigWindow(f)
+    
+    gtk.main()
+    
