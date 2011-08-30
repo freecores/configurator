@@ -136,6 +136,8 @@ class ConfigLabel(gtk.Label):
     def __init__(self, text):
         
         gtk.Label.__init__(self, "\n" + text)
+        self.set_alignment(0, .5)
+        self.set_use_markup(True)
         
     
     def save(self, *args): pass
@@ -337,5 +339,6 @@ if __name__ == '__main__':
     for f in sys.argv[1:]:
         ConfigWindow(f)
     
-    gtk.main()
+    try: gtk.main()
+    except KeyboardInterrupt: pass
     

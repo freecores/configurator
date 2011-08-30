@@ -1,6 +1,6 @@
 //=tab Main
 
-//=comment Select number of WB Groups
+//=comment Select number of <b>WB Groups</b>
 
 // Number of WB groups
 //=select
